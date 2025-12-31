@@ -70,6 +70,25 @@ pip install -r requirements.txt
 python3 workaround.py
 ```
 
+## A Durable Workaround
+
+### Using Standard Tools (Virtual Host by Virtual Host)
+
+Setting the `default_queue_type` [virtual host metadata](https://www.rabbitmq.com/docs/vhosts#metadata) field to `classic` is enough for most if not all
+cases.
+
+However, in clusters with a large enough number of virtual hosts, a single `rabbitmqctl eval` script might be preferrable (covered below).
+
+### For Future Virtual Host
+
+For the virtual hosts that will be declared after applying the workaround, it is necessary to update `rabbitmq.conf` (which requires a rolling restart of all nodes, one by one):
+
+```ini
+default_queue_type = classic
+```
+
+This will make sure that all newly created virtual host have a correct supported DQT value.
+
 ### Using `rabbitmqctl eval`
 
 For environments that have `rabbitmqctl` access and a large number of virtual hosts,
